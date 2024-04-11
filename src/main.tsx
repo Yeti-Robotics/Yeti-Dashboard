@@ -4,11 +4,10 @@ import App from './App';
 import { NT4Provider } from '@frc-web-components/react';
 
 import "./globals.css"
+//    <NT4Provider address="localhost">
 
 ReactDOM.createRoot(document.getElementById('app')!).render(
   <React.StrictMode>
-    <NT4Provider address="localhost">
-      <App />
-    </NT4Provider>
+    <App />
   </React.StrictMode>
 )
