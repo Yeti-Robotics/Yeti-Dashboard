@@ -1,49 +1,55 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react"
 import { useClickedOut } from "../hooks/useClickedOut";
+import { TabContext } from "../hooks/useTabManager";
 
 
-export function TabLabel({ deleteTab, children }: { addTab: () => void, deleteTab: (id: string) => void, children: string }) {
-    const [label, setLabel] = useState("Cheesus christ")
-    const [editedLabel, setEditedLabel] = useState("Cheesus christ");
+export function TabLabel({ tabCtx, children, id }: { id: string, tabCtx: TabContext, children: string }) {
+    const [label, setLabel] = useState(children)
+    const [editedLabel, setEditedLabel] = useState(children);
     const editedRef: MutableRefObject<HTMLSpanElement | null> = useRef(null);
 
     const [editing, setEditing] = useState(false);
     const { componentRef, clickedOut } = useClickedOut();
 
-    useEffect(() => {
-        if (clickedOut) {
-            handleFinishedEdit();
+    const updateEditLabel = (s: string) => {
+        if (editedRef.current) {
+            editedRef.current.textContent = s;
         }
-    }, [clickedOut])
+    }
+
+    useEffect(() => {
+        if (editing) {
+            clickedOut ? handleFinishedEdit() : updateEditLabel(label);
+        }
+    }, [clickedOut, editing])
 
     const handleFinishedEdit = () => {
-        console.log("Handle edit")
-        console.log(label)
-        console.log(editedLabel);
-        if (!editedRef.current) return;
-        const newLabel = editedRef?.current.textContent;
-        if (!newLabel || newLabel.length < 1) {
-            setEditedLabel(label);
-        } else {
-            setLabel(editedLabel);
-        }
-
         setEditing(false);
+
+        const newLabel = editedRef.current?.textContent!;
+
+        if (!newLabel || newLabel.length < 1) {
+            setEditedLabel(label)
+        } else {
+            setLabel(newLabel);
+            tabCtx.renameTab(id, newLabel);
+        }
     }
 
     return (
-        <div>
+        <div className="space-x-1">
             <span
                 ref={componentRef} onDoubleClick={() => setEditing(true)} onKeyDown={e => {
                     if (e.key === "Enter") { handleFinishedEdit() }
                 }}>
-                {!editing ?
-                    <span contentEditable={false} className="text-red-400">{label}</span> :
-                    <span
-                        ref={editedRef}
-                        suppressContentEditableWarning={true}
-                        contentEditable={editing}>{editedLabel}</span>}
+                <span className={`${editing ? "hidden" : ""}`}>{label}</span>
+                <span
+                    ref={editedRef}
+                    className={`${editing ? "" : "hidden"}`}
+                    suppressContentEditableWarning={true}
+                    contentEditable={editing}>{editedLabel}</span>
             </span >
+            {tabCtx.activeTab === id && tabCtx.tabs.length > 1 && <span onClick={() => tabCtx.deleteTab(id)}>&times;</span>}
         </div>
     )
 }
