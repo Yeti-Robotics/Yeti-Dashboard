@@ -4,10 +4,16 @@ import App from './App';
 import { NT4Provider } from '@frc-web-components/react';
 
 import "./globals.css"
-//    <NT4Provider address="localhost">
+//    
+
+// rio: 10.35.6.2
+// roborio-3506-frc.local
+// radio: 10.35.6.2
 
 ReactDOM.createRoot(document.getElementById('app')!).render(
   <React.StrictMode>
-    <App />
+    <NT4Provider address="localhost">
+      <App />
+    </NT4Provider>
   </React.StrictMode>
 )

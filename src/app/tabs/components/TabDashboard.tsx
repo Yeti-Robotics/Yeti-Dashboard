@@ -1,9 +1,15 @@
+import { Widget } from "@/app/widgets/components/Widget";
 
 
 export function TabDashboard({ id }: { id: string }) {
     return (
         <div>
-            {id}
+            <div>
+                {id}
+            </div>
+            <div>
+                <Widget />  
+            </div>
         </div>
     );
 }

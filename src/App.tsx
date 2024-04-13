@@ -11,13 +11,17 @@ import { useTabManager } from "./app/tabs/hooks/useTabManager";
 import { Tabs, TabsTrigger, TabsList, TabsContent } from "./components/ui/tabs";
 import { TabLabel } from "./app/tabs/components/TabLabel";
 import { TabDashboard } from "./app/tabs/components/TabDashboard";
+import { WidgetChooser } from "./app/widgets/components/WidgetChooser";
+import { useState } from "react";
 
 function App() {
   const tabCtx = useTabManager();
-  return (
+  const [showWidgetDialog, setShowWidgetDialog] = useState(true);
+
+  return (<>
     <div className="App">
       <Tabs value={tabCtx.activeTab} onValueChange={tabCtx.setActiveTab}>
-        <div className="p-3 divide-x-2 divide-black flex items-center space-x-5 border-b-2 border-black">
+        <div className="p-3 flex flex-wrap items-center space-x-5 divide-x-2 divide-black border-b-2 border-black">
           <div className="flex items-center space-x-3">
             <img src="/yeti.png" className="w-[50px] h-[50px]" />
             <Menubar>
@@ -32,7 +36,7 @@ function App() {
               <MenubarMenu>
                 <MenubarTrigger>Widgets</MenubarTrigger>
                 <MenubarContent>
-                  <MenubarItem>
+                  <MenubarItem onClick={() => setShowWidgetDialog(true)}>
                     Open widget dialog
                   </MenubarItem>
                 </MenubarContent>
@@ -69,6 +73,8 @@ function App() {
         </div>
       </Tabs>
     </div>
+    <WidgetChooser show={showWidgetDialog} setShow={setShowWidgetDialog} />
+  </>
   );
 }
 
