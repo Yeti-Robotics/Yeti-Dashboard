@@ -1,4 +1,5 @@
 import { BasicFmsInfo, BooleanBox, Field, Field3d, SendableChooser, ToggleSwitch } from "@frc-web-components/react";
+import { Field2d } from "./lib/Field2d";
 
 type CheckerFunction = (data: any, key: string) => boolean
 
@@ -16,19 +17,19 @@ const labelChecker = (label: string): CheckerFunction => {
 
 const hasAttributeChecker = (attr: string): CheckerFunction => {
     return (data: any, key: string) => {
-        return attr in data;
+        return !!data[attr];
     }
 }
 
 const attributeValueChecker = (attr: string, value: any): CheckerFunction => {
     return (data: any, key: string) => {
-        return attr in data && data[attr] === value
+        return !!data[attr] && data[attr] === value
     }
 }
 
 const typeOfChecker = (attr: string, tp: string): CheckerFunction => {
     return (data: any, key: string) => {
-        return typeof data[attr] === tp;
+        return typeof (attr.length ? data[attr] : data) === tp;
     }
 }
 
@@ -45,31 +46,64 @@ const allCheck = (...funcs: CheckerFunction[]): CheckerFunction => {
 }
 
 
-export const fallbackComponent = null;
+export const fallbackComponent = {
+    name: "default",
+    component: null
+};
 
 export const components = [
     {
+        name: "basicfmsinfo",
         checkers: [typeChecker("FMSInfo"), labelChecker("FMSInfo")],
         component: BasicFmsInfo
     },
     {
-        checkers: [typeChecker("Field2d")],
-        component: Field
+        name: "field",
+        checkers: [typeChecker("Field2d"), labelChecker("robotPose")],
+        component: Field2d
     },
     {
+        name: "field3d",
         checkers: [typeChecker("Field3d")],
         component: Field3d
     },
     {
+        name: "toggleswitch",
         checkers: [allCheck(attributeValueChecker(".controllable", true), typeOfChecker("Value", "boolean"))],
         component: ToggleSwitch
     },
     {
-        checkers: [typeOfChecker("Value", "boolean")],
+        name: "booleanbox",
+        checkers: [typeOfChecker("Value", "boolean"), typeOfChecker("", "boolean")],
         component: BooleanBox
     },
     {
+        name: "sendablechooser",
         checkers: [labelChecker("Auto Chooser"), attributeValueChecker(".name", "Auto Chooser"), attributeValueChecker(".type", "String Chooser")],
         component: SendableChooser
     }
 ]
+
+const convertArrayToObject = (array: any[], key: string) => {
+    const initialValue = {};
+    return array.reduce((obj: any, item: any) => {
+        return {
+            ...obj,
+            [item[key]]: item.component,
+        };
+    }, initialValue);
+};
+
+export const componentsMap = convertArrayToObject(components, "name") as { [x: string]: JSX.Element | React.ReactNode }
+
+export function findWidgetComponent(data: any, key: string) {
+    for (const comp of components) {
+        for (const check of comp.checkers) {
+            if (check(data, key)) {
+                return comp.name;
+            }
+        }
+    }
+
+    return fallbackComponent.name;
+}

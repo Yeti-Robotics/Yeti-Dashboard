@@ -4,6 +4,8 @@ import App from './App';
 import { NT4Provider } from '@frc-web-components/react';
 
 import "./globals.css"
+import { DragDropContext, useWidgetDragDrop } from './app/widgets/hooks/useWidgetDragDrop';
+import { AppWrapper } from './AppWrapper';
 //    
 
 // rio: 10.35.6.2
@@ -13,7 +15,7 @@ import "./globals.css"
 ReactDOM.createRoot(document.getElementById('app')!).render(
   <React.StrictMode>
     <NT4Provider address="localhost">
-      <App />
+      <AppWrapper />
     </NT4Provider>
   </React.StrictMode>
 )
