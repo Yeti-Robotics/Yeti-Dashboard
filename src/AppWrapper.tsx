@@ -1,10 +1,10 @@
 import App from "./App";
-import { DragDropContext, useWidgetDragDrop } from "./app/widgets/hooks/useWidgetDragDrop";
+import { DragDropContext, provideDragAndDrop } from "./app/widgets/hooks/useWidgetDragDrop";
 
 
 export function AppWrapper() {
     return (
-        <DragDropContext.Provider value={useWidgetDragDrop()}>
+        <DragDropContext.Provider value={provideDragAndDrop()}>
             <App />
         </DragDropContext.Provider>
     );

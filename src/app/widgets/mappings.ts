@@ -1,5 +1,7 @@
 import { BasicFmsInfo, BooleanBox, Field, Field3d, SendableChooser, ToggleSwitch } from "@frc-web-components/react";
 import { Field2d } from "./lib/Field2d";
+import { Variable } from "lucide-react";
+import { ValueDisplay } from "./lib/ValueDisplay";
 
 type CheckerFunction = (data: any, key: string) => boolean
 
@@ -48,7 +50,7 @@ const allCheck = (...funcs: CheckerFunction[]): CheckerFunction => {
 
 export const fallbackComponent = {
     name: "default",
-    component: null
+    component: ValueDisplay
 };
 
 export const components = [
@@ -94,7 +96,10 @@ const convertArrayToObject = (array: any[], key: string) => {
     }, initialValue);
 };
 
-export const componentsMap = convertArrayToObject(components, "name") as { [x: string]: JSX.Element | React.ReactNode }
+const cmpMap = convertArrayToObject(components, "name") as { [x: string]: any };
+cmpMap["default"] = fallbackComponent.component as unknown;
+
+export const componentsMap = cmpMap;
 
 export function findWidgetComponent(data: any, key: string) {
     for (const comp of components) {

@@ -1,9 +1,10 @@
 import { BasicFmsInfo, useEntry } from "@frc-web-components/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { Rnd } from "react-rnd";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { Bars2Icon, XMarkIcon } from "@heroicons/react/16/solid";
 import { WidgetChooserAccordion } from "./WidgetChooserAccordion";
+import { useEntryCustom } from "../hooks/useEntryCustom";
 
 const recalcPos = (windowWidth: number, windowHeight: number) => (
     {
@@ -18,6 +19,7 @@ const parse = (object: object | null, dir: string) => {
     if (!object) return;
     const nodes = [];
     for (const [key, value] of Object.entries(object)) {
+        if (key.startsWith(".")) continue;
         const parentObj: any = {};
         parentObj.key = `${dir}/${key}`;
         parentObj.title = key;
@@ -36,7 +38,8 @@ const parse = (object: object | null, dir: string) => {
 
 export function WidgetChooser({ show, setShow }: { show: boolean, setShow: Dispatch<SetStateAction<boolean>> }) {
     const [isDraggable, setDraggable] = useState(false);
-    const [entry] = useEntry("", null)
+    const [entry] = useEntryCustom("", null)
+    const calcPanel = useMemo(() => parse(entry, ""), [entry])
 
     const { width: windowWidth, height: windowHeight } = useWindowSize();
     const [{ x, y, width, height }, setPosition] =
@@ -77,7 +80,7 @@ export function WidgetChooser({ show, setShow }: { show: boolean, setShow: Dispa
                             </div>
                         </div>
                         <div className="w-full">
-                            <WidgetChooserAccordion size={height * 0.8} entries={parse(entry!, "") ?? []} />
+                            <WidgetChooserAccordion size={height * 0.8} entries={calcPanel ?? []} />
                         </div>
                     </div>
                 </Rnd>

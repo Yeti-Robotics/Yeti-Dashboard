@@ -2,10 +2,10 @@
 import { ChevronRightIcon } from "@heroicons/react/16/solid";
 import React, { useContext } from "react";
 import { Accordion, AccordionBody, AccordionHeader, AccordionItem } from "react-headless-accordion";
-import { DragDropContext } from "../hooks/useWidgetDragDrop";
+import { DragDropContext, useWidgetDragAndDrop } from "../hooks/useWidgetDragDrop";
 
 function DatakeyWrapper({ dataKey, children }: { dataKey: string, children: React.ReactNode | React.ReactNode[] }) {
-    const { setDataKey } = useContext(DragDropContext)
+    const { setDataKey } = useWidgetDragAndDrop();
 
     return (<div onDragStart={e => {
         console.log("Drag start for " + dataKey);
@@ -43,7 +43,10 @@ function createSubAccordion(content: any, lvl: number) {
                                     <AccordionTitle dataKey={c.key} title={c.title} open={open} />
                                     {createSubAccordion(c.content, lvl + 1)}
                                 </div>) : (<DatakeyWrapper dataKey={c.key}>
-                                    <p draggable={true}>{`${c.title} - ${c.content}`}</p>
+                                    <p className="flex justify-between" draggable={true}>
+                                        <span>{c.title}</span>{" "}
+                                        <span className="truncate overflow-hidden text-gray-700 pr-3">{typeof c.content}</span>
+                                    </p>
                                 </DatakeyWrapper>)
                         )}
                     </AccordionItem>
