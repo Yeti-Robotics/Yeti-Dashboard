@@ -1,24 +1,35 @@
 import { Widget } from "@/app/widgets/components/Widget";
-import { useContext, useState } from "react";
-import { useWidgetManager } from "../../widgets/hooks/useWidgetManager";
+import { createContext, useContext, useState } from "react";
+import { DefaultWidgetContext, WidgetContext, useWidgetManager } from "../../widgets/hooks/useWidgetManager";
 import { DragDropContext, useWidgetDragAndDrop } from "@/app/widgets/hooks/useWidgetDragDrop";
+import { createWidgetStore } from "@/store/widgetStore";
 
 
 export function TabDashboard({ id, activeTab }: { id: string, activeTab: string }) {
-    const { widgets, addWidget } = useWidgetManager();
-    const { dataKey, setDataKey } = useWidgetDragAndDrop();
+    const { getDataKey } = useWidgetDragAndDrop();
+    const manager = createWidgetStore(id)();
+    const { widgets, actions: { addWidget } } = manager;
     return (
         <div className={`h-full w-full absolute ${activeTab === id ? "" : "hidden"}`}
             onDragOver={e => e.preventDefault()}
             onDrop={e => {
+                const dataKey = getDataKey();
                 console.log("Dropped!")
                 console.log(`Transferred data: ${dataKey}`)
                 if (!dataKey.length) return;
-                addWidget({ initialX: e.nativeEvent.offsetX, initialY: e.nativeEvent.offsetY, dataKey });
-                setDataKey("");
+                addWidget({
+                    widgetId: String(Date.now()),
+                    position: {
+                        x: e.nativeEvent.offsetX,
+                        y: e.nativeEvent.offsetY,
+                        width: -1,
+                        height: -1
+                    },
+                    dataKey
+                });
                 e.preventDefault();
             }}>
-            {widgets.map((props, i) => <Widget key={i} {...props} />)}
+            {Object.values(widgets).map((props) => <Widget widgetContext={manager} key={props.widgetId} {...props} />)}
         </div>
     );
 }

@@ -7,7 +7,7 @@ import { DragDropContext, useWidgetDragAndDrop } from "../hooks/useWidgetDragDro
 function DatakeyWrapper({ dataKey, children }: { dataKey: string, children: React.ReactNode | React.ReactNode[] }) {
     const { setDataKey } = useWidgetDragAndDrop();
 
-    return (<div onDragStart={e => {
+    return (<div onDragStart={_e => {
         console.log("Drag start for " + dataKey);
         setDataKey(dataKey);
     }}>{children}</div>)

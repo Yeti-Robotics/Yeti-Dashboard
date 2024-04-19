@@ -1,4 +1,3 @@
-import { BasicFmsInfo, useEntry } from "@frc-web-components/react";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { Rnd } from "react-rnd";
 import { useWindowSize } from "../hooks/useWindowSize";
@@ -19,6 +18,7 @@ const parse = (object: object | null, dir: string) => {
     if (!object) return;
     const nodes = [];
     for (const [key, value] of Object.entries(object)) {
+        //if (key.startsWith(".type") || key.startsWith(".controllable")) continue;
         if (key.startsWith(".")) continue;
         const parentObj: any = {};
         parentObj.key = `${dir}/${key}`;
@@ -66,7 +66,7 @@ export function WidgetChooser({ show, setShow }: { show: boolean, setShow: Dispa
                             x: position.x,
                             y: position.y
                         });
-                    }} className="flex border-4 bg-white border-black p-3 rounded-xl w-full"
+                    }} className="flex border-4 bg-white border-black p-3 rounded-xl z-40 w-full"
                 >
                     <div className="flex top-0 flex-col space-y-3 items-center justify-between">
                         <div className="flex justify-between w-full">

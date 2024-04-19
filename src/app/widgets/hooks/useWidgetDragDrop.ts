@@ -1,17 +1,22 @@
 import { Dispatch, SetStateAction, createContext, useContext, useState } from "react"
 
 interface DragAndDropContext {
-    dataKey: string,
+    getDataKey: () => string,
     setDataKey: Dispatch<SetStateAction<string>>
 }
 
 export function provideDragAndDrop() {
     const [dataKey, setDataKey] = useState("")
-    return { dataKey, setDataKey };
+    const getDataKey =() => {
+        const c = dataKey;
+        setDataKey("");
+        return c;
+    }
+    return { getDataKey, setDataKey };
 }
 
 export const DragDropContext = createContext<DragAndDropContext>({
-    dataKey: "",
+    getDataKey: () => "",
     setDataKey: () => { }
 });
 
