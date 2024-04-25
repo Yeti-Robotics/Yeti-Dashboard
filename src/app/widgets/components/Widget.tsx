@@ -27,7 +27,8 @@ export function Widget({ position: pos, dataKey, widgetType, widgetId, widgetCon
     // const [entry, setEntry] = useState(null);
     const [widgetName, setWidgetName] = useState(widgetType ?? "");
     const Component = useMemo(() => componentsMap[widgetName], [widgetName]);
-
+    console.log(`Widget: ${widgetId} ${widgetName} ${lbl} ${dataKey}`)
+    console.log(pos)
     const [label, setLabel] = useState(lbl ?? dataKey.split("/").pop() ?? "");
     const [position, setPosition] = useState({ x: pos.x, y: pos.y, width: pos?.width, height: pos?.height });
 

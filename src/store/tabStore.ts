@@ -57,8 +57,8 @@ const immerActions = {
 export const useTabStore = create<TabStore>()(
     persist((set, get) => ({
         tabs: [
-            { id: "first", name: "Autonomous", deleted: false },
-             { id: String(Date.now()), name: "Teleop", deleted: false },
+            { id: generateId(), name: "Autonomous", deleted: false },
+            { id: generateId(), name: "Teleop", deleted: false },
         ],
         activeTab: "first",
         actions: {

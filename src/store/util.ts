@@ -1,8 +1,9 @@
 import { createJSONStorage } from "zustand/middleware";
 
-
 export function generateId() {
-    return String(Date.now());
+    const uuid = crypto.randomUUID();
+    console.log(uuid)
+    return uuid
 }
 
 export function createLocalStorageProvider() {

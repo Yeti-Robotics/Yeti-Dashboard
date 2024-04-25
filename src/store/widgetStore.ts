@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { getStorageEngine } from "./util"
+import { generateId, getStorageEngine } from "./util"
 import { produce } from "immer"
 
 export interface WidgetData {
@@ -32,6 +32,7 @@ export interface WidgetStore {
 
 const immerActions = {
     addWidget: (widgets: WidgetTree, el: WidgetData) => produce(widgets, nextState => {
+        el.widgetId = generateId();
         nextState[el.widgetId] = el;
     }),
     deleteWidget: (widgets: WidgetTree, id: string) => produce(widgets, nextState => {

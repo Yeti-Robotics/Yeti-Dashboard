@@ -21,7 +21,7 @@ function App() {
   const [showWidgetDialog, setShowWidgetDialog] = useState(true);
 
   return (<>
-    <div className="h-full">
+    <div className="h-full bg-gradient-to-b from-blue-400 to-20% to-white">
       <div className="p-3 flex flex-wrap items-center space-x-5 divide-x-2 divide-black border-b-2 border-black">
         <div className="flex items-center space-x-3">
           <img src="/yeti.png" className="w-[50px] h-[50px]" />

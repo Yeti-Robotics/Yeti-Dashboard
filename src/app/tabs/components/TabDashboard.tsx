@@ -1,7 +1,5 @@
 import { Widget } from "@/app/widgets/components/Widget";
-import { createContext, useContext, useState } from "react";
-import { DefaultWidgetContext, WidgetContext, useWidgetManager } from "../../widgets/hooks/useWidgetManager";
-import { DragDropContext, useWidgetDragAndDrop } from "@/app/widgets/hooks/useWidgetDragDrop";
+import { useWidgetDragAndDrop } from "@/app/widgets/hooks/useWidgetDragDrop";
 import { createWidgetStore } from "@/store/widgetStore";
 
 
@@ -18,7 +16,7 @@ export function TabDashboard({ id, activeTab }: { id: string, activeTab: string 
                 console.log(`Transferred data: ${dataKey}`)
                 if (!dataKey.length) return;
                 addWidget({
-                    widgetId: String(Date.now()),
+                    widgetId: "",
                     position: {
                         x: e.nativeEvent.offsetX,
                         y: e.nativeEvent.offsetY,
