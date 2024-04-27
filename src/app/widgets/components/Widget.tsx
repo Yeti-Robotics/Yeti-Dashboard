@@ -21,6 +21,8 @@ interface WithWidgetContext {
 }
 
 export function Widget({ position: pos, dataKey, widgetType, widgetId, widgetContext, label: lbl }: WidgetData & WithWidgetContext) {
+    console.log("rerendered")
+
     const { actions: { deleteWidget, setWidgetOnTop, updateWidget }, widgetOnTopId } = widgetContext;
     const [isDraggable, setDraggable] = useState(false);
     const [entry] = useEntry(dataKey, null);
@@ -31,6 +33,7 @@ export function Widget({ position: pos, dataKey, widgetType, widgetId, widgetCon
     console.log(pos)
     const [label, setLabel] = useState(lbl ?? dataKey.split("/").pop() ?? "");
     const [position, setPosition] = useState({ x: pos.x, y: pos.y, width: pos?.width, height: pos?.height });
+    const [entireDrag, setEntireDrag] = useState(false);
 
     useEffect(() => {
         if (entry !== null && !widgetName.length) {
@@ -43,6 +46,7 @@ export function Widget({ position: pos, dataKey, widgetType, widgetId, widgetCon
     }, [label, position])
     return (
         <Rnd
+            onDoubleClick={() => setEntireDrag(d => !d)}
             position={{ x: position.x, y: position.y }}
             onDragStop={(_e, d) => {
                 setPosition(p => ({ ...p, x: d.x, y: d.y }))
@@ -55,7 +59,7 @@ export function Widget({ position: pos, dataKey, widgetType, widgetId, widgetCon
                     y: position.y
                 });
             }}
-            disableDragging={!isDraggable}
+            disableDragging={!isDraggable && !entireDrag}
             style={{ zIndex: widgetOnTopId === widgetId ? 30 : 0 }}
             className="flex rounded-xl w-full absolute"
         >

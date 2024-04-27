@@ -59,7 +59,6 @@ export const createWidgetStore = (tabId: string) => {
             storage: getStorageEngine(),
             partialize: (state) => ({
                 widgets: state.widgets,
-                widgetOnTopId: state.widgetOnTopId
             })
         }));
 }

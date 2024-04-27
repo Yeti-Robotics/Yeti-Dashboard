@@ -3,7 +3,8 @@ import { useEffect, useMemo } from "react";
 import { useEntryCustom } from "../hooks/useEntryCustom";
 
 export function Field2d(props: { "source-key": string }) {
-    const [entry] = useEntryCustom(props["source-key"], null) as [any | null, any];
+   // const [entry] = useEntryCustom(props["source-key"], null) as [any | null, any];
+   const entry = null;
     const [fmsEntry] = useEntry("/FMSInfo/IsRedAlliance", null) as [boolean | null, any]
     const pose = useMemo(() => entry && entry.robotPose ? entry.robotPose : entry instanceof Array ? entry : [0, 0, 0], [entry]);
 
