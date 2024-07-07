@@ -29,8 +29,7 @@ export function Widget({ position: pos, dataKey, widgetType, widgetId, widgetCon
     // const [entry, setEntry] = useState(null);
     const [widgetName, setWidgetName] = useState(widgetType ?? "");
     const Component = useMemo(() => componentsMap[widgetName], [widgetName]);
-    console.log(`Widget: ${widgetId} ${widgetName} ${lbl} ${dataKey}`)
-    console.log(pos)
+
     const [label, setLabel] = useState(lbl ?? dataKey.split("/").pop() ?? "");
     const [position, setPosition] = useState({ x: pos.x, y: pos.y, width: pos?.width, height: pos?.height });
     const [entireDrag, setEntireDrag] = useState(false);
@@ -40,12 +39,15 @@ export function Widget({ position: pos, dataKey, widgetType, widgetId, widgetCon
             const name = findWidgetComponent(entry, dataKey);
             setWidgetName(name)
         }
-    }, [entry])
+    }, [entry]);
+
     useEffect(() => {
         updateWidget(widgetId, { label, position });
-    }, [label, position])
+    }, [label, position]);
+
     return (
         <Rnd
+            onClick={() => setWidgetOnTop(widgetId)}
             onDoubleClick={() => setEntireDrag(d => !d)}
             position={{ x: position.x, y: position.y }}
             onDragStop={(_e, d) => {

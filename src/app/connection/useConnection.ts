@@ -13,7 +13,7 @@ export function provideConnectionToggle() {
 }
 
 export const ConnectionContext = createContext<ConnectionContextType>({
-    connectionIp: "localhost",
+    connectionIp: "3506",
     setConnectionIp: () => { }
 });
 

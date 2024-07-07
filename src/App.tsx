@@ -18,8 +18,8 @@ import { useTabStore } from "./store/tabStore";
 function App() {
   const tabCtx = useTabStore();
   const tabView = useTabStore(state => state.tabs.filter(t => !t.deleted))
-  const [showWidgetDialog, setShowWidgetDialog] = useState(true);
-
+  const [showWidgetDialog, setShowWidgetDialog] = useState(true)
+  
   return (<>
     <div className="h-full bg-gradient-to-b from-blue-400 to-20% to-white">
       <div className="p-3 flex flex-wrap items-center space-x-5 divide-x-2 divide-black border-b-2 border-black">

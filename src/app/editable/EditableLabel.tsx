@@ -26,7 +26,7 @@ export function EditableLabel({ label, setLabel }: { label: string, setLabel: Di
 
         const newLabel = editedRef.current?.textContent!;
 
-        if (!newLabel || newLabel.length < 1) {
+        if (!newLabel || newLabel.trim().length < 1) {
             setEditedLabel(label)
         } else {
             setLabel(newLabel);
