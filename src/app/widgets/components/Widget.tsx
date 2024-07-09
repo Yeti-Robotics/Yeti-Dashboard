@@ -8,7 +8,12 @@ import {
 } from "react";
 import { Rnd } from "react-rnd";
 import { componentsMap, findWidgetComponent } from "../mappings";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader
+} from "@/components/ui/card";
 import { PencilIcon, TrashIcon } from "@heroicons/react/16/solid";
 import { EditableLabel } from "@/app/editable/EditableLabel";
 import {
@@ -111,24 +116,22 @@ export function Widget({
                     <ContextMenuTrigger>
                         <Card
                             onClick={() => setWidgetOnTop(widgetId)}
-                            className="h-full border-l-yeti-primary border-l-4 shadow-sm"
+                            className="h-full shadow-sm"
                         >
                             <CardHeader className="p-4">
-                                <CardTitle className="inline-flex items-center">
+                                <CardDescription className="flex w-full justify-between items-center">
+                                    <EditableLabel
+                                        label={label}
+                                        setLabel={setLabel}
+                                    />
                                     <GripVertical
                                         onMouseOver={() => setDraggable(true)}
                                         onMouseOut={() => setDraggable(false)}
-                                        className="size-4 mr-2"
+                                        className="size-4 ml-2"
                                     />
-                                    <span className=" text-lg">
-                                        <EditableLabel
-                                            label={label}
-                                            setLabel={setLabel}
-                                        />
-                                    </span>
-                                </CardTitle>
+                                </CardDescription>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="px-4">
                                 <div className="flex justify-center items-center">
                                     {Component && (
                                         <WidgetComponentRenderer
