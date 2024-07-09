@@ -1,29 +1,67 @@
-import { BasicFmsInfo, useEntry, useKeyListener } from "@frc-web-components/react";
-import { Context, isValidElement, memo, useContext, useEffect, useMemo, useState } from "react";
+import { useEntry } from "@frc-web-components/react";
+import {
+    ComponentType,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState
+} from "react";
 import { Rnd } from "react-rnd";
 import { componentsMap, findWidgetComponent } from "../mappings";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bars2Icon, PencilIcon, TrashIcon } from "@heroicons/react/16/solid";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader
+} from "@/components/ui/card";
+import { PencilIcon, TrashIcon } from "@heroicons/react/16/solid";
 import { EditableLabel } from "@/app/editable/EditableLabel";
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+    ContextMenu,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuTrigger
+} from "@/components/ui/context-menu";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from "@/components/ui/dialog";
 import { WidgetStore, WidgetData } from "@/store/widgetStore";
-
+import { GripVertical } from "lucide-react";
 
 // make typescript happy :) i know im not
-function WidgetComponentRenderer({ component: Component, props }: { component: any, props: any }) {
+function WidgetComponentRenderer<T extends object>({
+    component: Component,
+    props
+}: {
+    component: ComponentType<T>;
+    props: T;
+}) {
     if (!Component) return null;
     return <Component {...props} />;
 }
 
 interface WithWidgetContext {
-    widgetContext: WidgetStore
+    widgetContext: WidgetStore;
 }
 
-export function Widget({ position: pos, dataKey, widgetType, widgetId, widgetContext, label: lbl }: WidgetData & WithWidgetContext) {
-    console.log("rerendered")
-
-    const { actions: { deleteWidget, setWidgetOnTop, updateWidget }, widgetOnTopId } = widgetContext;
+export function Widget({
+    position: pos,
+    dataKey,
+    widgetType,
+    widgetId,
+    widgetContext,
+    label: lbl
+}: WidgetData & WithWidgetContext) {
+    const {
+        actions: { deleteWidget, setWidgetOnTop, updateWidget },
+        widgetOnTopId
+    } = widgetContext;
     const [isDraggable, setDraggable] = useState(false);
     const [entry] = useEntry(dataKey, null);
     // const [entry, setEntry] = useState(null);
@@ -31,19 +69,27 @@ export function Widget({ position: pos, dataKey, widgetType, widgetId, widgetCon
     const Component = useMemo(() => componentsMap[widgetName], [widgetName]);
 
     const [label, setLabel] = useState(lbl ?? dataKey.split("/").pop() ?? "");
-    const [position, setPosition] = useState({ x: pos.x, y: pos.y, width: pos?.width, height: pos?.height });
+    const [position, setPosition] = useState({
+        x: pos.x,
+        y: pos.y,
+        width: pos?.width,
+        height: pos?.height
+    });
     const [entireDrag, setEntireDrag] = useState(false);
 
     useEffect(() => {
         if (entry !== null && !widgetName.length) {
             const name = findWidgetComponent(entry, dataKey);
-            setWidgetName(name)
+            setWidgetName(name);
         }
-    }, [entry]);
+    }, [entry, dataKey, widgetName.length]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const updateCallback = useCallback(updateWidget, []);
 
     useEffect(() => {
-        updateWidget(widgetId, { label, position });
-    }, [label, position]);
+        updateCallback(widgetId, { label, position });
+    }, [label, position, widgetId, updateCallback]);
 
     return (
         <Rnd
@@ -51,7 +97,7 @@ export function Widget({ position: pos, dataKey, widgetType, widgetId, widgetCon
             onDoubleClick={() => setEntireDrag(d => !d)}
             position={{ x: position.x, y: position.y }}
             onDragStop={(_e, d) => {
-                setPosition(p => ({ ...p, x: d.x, y: d.y }))
+                setPosition(p => ({ ...p, x: d.x, y: d.y }));
             }}
             onResizeStop={(_e, _direction, ref, _delta, position) => {
                 setPosition({
@@ -68,31 +114,35 @@ export function Widget({ position: pos, dataKey, widgetType, widgetId, widgetCon
             <Dialog>
                 <ContextMenu>
                     <ContextMenuTrigger>
-                        <Card onClick={() => setWidgetOnTop(widgetId)} className="h-full">
-                            <CardHeader>
-                                <CardTitle className="text-center">
-                                    <div
-                                        className="flex flex-col justify-center items-center space-y-4 select-none">
-                                        <div className="flex flex-col justify-center items-center space-y-2"
-                                        >
-                                            <Bars2Icon onMouseOver={() => setDraggable(true)}
-                                                onMouseOut={() => setDraggable(false)}
-                                                className="w-4 h-4" />
-                                            <h1><EditableLabel label={label} setLabel={setLabel} /></h1>
-                                        </div>
-                                    </div>
-                                </CardTitle>
+                        <Card
+                            onClick={() => setWidgetOnTop(widgetId)}
+                            className="h-full shadow-sm"
+                        >
+                            <CardHeader className="p-4">
+                                <CardDescription className="flex w-full justify-between items-center">
+                                    <EditableLabel
+                                        label={label}
+                                        setLabel={setLabel}
+                                    />
+                                    <GripVertical
+                                        onMouseOver={() => setDraggable(true)}
+                                        onMouseOut={() => setDraggable(false)}
+                                        className="size-4 ml-2"
+                                    />
+                                </CardDescription>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="px-4">
                                 <div className="flex justify-center items-center">
-                                    {
-                                        Component &&
-                                        <WidgetComponentRenderer component={Component} props={{
-                                            "source-key": dataKey,
-                                            width: position.width,
-                                            height: position.height
-                                        }} />
-                                    }
+                                    {Component && (
+                                        <WidgetComponentRenderer
+                                            component={Component}
+                                            props={{
+                                                "source-key": dataKey,
+                                                width: position.width,
+                                                height: position.height
+                                            }}
+                                        />
+                                    )}
                                 </div>
                             </CardContent>
                         </Card>
@@ -106,9 +156,11 @@ export function Widget({ position: pos, dataKey, widgetType, widgetId, widgetCon
                                 </span>
                             </ContextMenuItem>
                         </DialogTrigger>
-                        <ContextMenuItem onClick={() => {
-                            deleteWidget(widgetId)
-                        }}>
+                        <ContextMenuItem
+                            onClick={() => {
+                                deleteWidget(widgetId);
+                            }}
+                        >
                             <span className="flex items-center justify-between space-x-3 text-red-600">
                                 <TrashIcon className=" fill-red-600 w-4 h-4" />
                                 <div>Delete</div>
@@ -120,8 +172,8 @@ export function Widget({ position: pos, dataKey, widgetType, widgetId, widgetCon
                     <DialogHeader>
                         <DialogTitle>Are you absolutely sure?</DialogTitle>
                         <DialogDescription>
-                            This action cannot be undone. Are you sure you want to permanently
-                            delete this file from our servers?
+                            This action cannot be undone. Are you sure you want
+                            to permanently delete this file from our servers?
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
@@ -129,6 +181,6 @@ export function Widget({ position: pos, dataKey, widgetType, widgetId, widgetCon
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </Rnd >
-    )
+        </Rnd>
+    );
 }

@@ -1,9 +1,11 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { Rnd } from "react-rnd";
 import { useWindowSize } from "../hooks/useWindowSize";
-import { Bars2Icon, XMarkIcon } from "@heroicons/react/16/solid";
+import { XMarkIcon } from "@heroicons/react/16/solid";
 import { WidgetChooserAccordion } from "./WidgetChooserAccordion";
 import { useEntryCustom } from "../hooks/useEntryCustom";
+import { GripVertical } from "lucide-react";
+import { CardDescription } from "@/components/ui/card";
 
 const recalcPos = (windowWidth: number, windowHeight: number) => ({
     x: 0.6 * windowWidth,
@@ -52,7 +54,7 @@ export function WidgetChooser({
     const accordionEntries = useMemo(() => parse(entry, ""), [entry]);
 
     const { width: windowWidth, height: windowHeight } = useWindowSize();
-    const [{ x, y, width, height }, setPosition] = useState(
+    const [{ x, y }, setPosition] = useState(
         recalcPos(window.innerWidth, window.innerHeight)
     );
 
@@ -65,7 +67,6 @@ export function WidgetChooser({
             {show && (
                 <Rnd
                     disableDragging={!isDraggable}
-                    size={{ width, height }}
                     position={{ x, y }}
                     onDragStop={(_event, delta) => {
                         setPosition(p => ({ ...p, x: delta.x, y: delta.y }));
@@ -84,32 +85,26 @@ export function WidgetChooser({
                             y: position.y
                         });
                     }}
-                    className="flex border-4 bg-white border-black rounded-xl z-40 w-full overflow-y-auto pb-3"
+                    className="flex relative bg-white shadow-md rounded-xl w-full pb-4"
                 >
-                    <div className="sticky top-0 bg-white z-50 left-0 p-3">
+                    <div className="fixed w-full top-0 z-50 left-0 p-4">
                         <div className="flex w-full h-fit left-0 top-0 flex-col space-y-3 items-center justify-between">
-                            <div className="flex justify-between w-full">
-                                <div className="flex-1"></div>
-                                <div
-                                    onMouseOver={() => setDraggable(true)}
-                                    onMouseOut={() => setDraggable(false)}
-                                    className="flex flex-col items-center justify-center"
-                                >
-                                    <Bars2Icon className="w-6 h-6" />
-                                    <h1 className="text-center text-3xl">
-                                        Widget chooser
-                                    </h1>
-                                </div>
-                                <div className="flex-1">
-                                    <XMarkIcon
-                                        onClick={() => setShow(false)}
-                                        className="w-6 h-6 float-right cursor-pointer"
-                                    />
-                                </div>
-                            </div>
+                            <CardDescription
+                                onMouseOver={() => setDraggable(true)}
+                                onMouseOut={() => setDraggable(false)}
+                                className="flex w-full items-center justify-between"
+                            >
+                                <GripVertical className="size-4" />
+                                <h2 className="text-center">Widget Chooser</h2>
+                                <XMarkIcon
+                                    onClick={() => setShow(false)}
+                                    className="w-6 h-6 float-right cursor-pointer"
+                                />
+                            </CardDescription>
                         </div>
                     </div>
-                    <div className="w-full min-h-full px-2">
+                    <div className="h-[60px] relative"></div>
+                    <div className="w-full max-h-80 overflow-y-auto px-2 font-['Libre Franklin']">
                         <WidgetChooserAccordion entries={accordionEntries} />
                     </div>
                 </Rnd>
